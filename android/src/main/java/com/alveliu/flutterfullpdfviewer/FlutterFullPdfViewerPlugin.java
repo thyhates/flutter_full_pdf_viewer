@@ -4,42 +4,69 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import android.view.Display;
 import android.widget.FrameLayout;
 
 import java.util.Map;
 
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 
 /**
  * FlutterFullPdfViewerPlugin
  */
-public class FlutterFullPdfViewerPlugin implements MethodCallHandler, PluginRegistry.ActivityResultListener {
+public class FlutterFullPdfViewerPlugin implements FlutterPlugin, MethodCallHandler, ActivityAware {
     static MethodChannel channel;
     private Activity activity;
     private FlutterFullPdfViewerManager flutterFullPdfViewerManager;
 
-    private FlutterFullPdfViewerPlugin (Activity activity) {
-        this.activity = activity;
-    }
-
     /**
      * Plugin registration.
      */
-    public static void registerWith(Registrar registrar) {
-        channel = new MethodChannel(registrar.messenger(), "flutter_full_pdf_viewer");
-        final FlutterFullPdfViewerPlugin instance = new FlutterFullPdfViewerPlugin(registrar.activity());
-        registrar.addActivityResultListener(instance);
-        channel.setMethodCallHandler(instance);
+
+    @Override
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
+
+        channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "flutter_full_pdf_viewer");
+        channel.setMethodCallHandler(this);
     }
 
     @Override
-    public void onMethodCall(MethodCall call, Result result) {
+    public void onAttachedToActivity(ActivityPluginBinding activityPluginBinding) {
+        // TODO: your plugin is now attached to an Activity
+        activity = activityPluginBinding.getActivity();
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+        // TODO: the Activity your plugin was attached to was
+        // destroyed to change configuration.
+        // This call will be followed by onReattachedToActivityForConfigChanges().
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(ActivityPluginBinding activityPluginBinding) {
+        // TODO: your plugin is now attached to a new Activity
+        // after a configuration change.
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+        // TODO: your plugin is no longer associated with an Activity.
+        // Clean up references.
+    }
+
+    @Override
+    public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         switch (call.method) {
             case "launch":
                 openPDF(call, result);
@@ -105,7 +132,7 @@ public class FlutterFullPdfViewerPlugin implements MethodCallHandler, PluginRegi
     }
 
     @Override
-    public boolean onActivityResult(int i, int i1, Intent intent) {
-        return flutterFullPdfViewerManager != null;
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+        channel.setMethodCallHandler(null);
     }
 }

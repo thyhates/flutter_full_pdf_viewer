@@ -7,7 +7,6 @@ import android.widget.FrameLayout;
 import com.github.barteksc.pdfviewer.PDFView;
 
 import java.io.File;
-
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
