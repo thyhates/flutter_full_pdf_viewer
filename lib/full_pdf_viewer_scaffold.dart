@@ -8,10 +8,12 @@ class PDFViewerScaffold extends StatefulWidget {
   final PreferredSizeWidget? appBar;
   final String path;
   final bool primary;
+  final Widget? floatingActionButton;
 
   const PDFViewerScaffold({
     Key? key,
     this.appBar,
+    this.floatingActionButton,
     required this.path,
     this.primary = true,
   }) : super(key: key);
